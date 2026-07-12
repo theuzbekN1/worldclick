@@ -32,7 +32,6 @@
             font-size: 1.1rem;
         }
 
-        /* Global counter display */
         #counter {
             font-size: 5rem;
             font-weight: bold;
@@ -42,7 +41,6 @@
             margin-bottom: 30px;
         }
 
-        /* THE BIG LIVE BUTTON */
         .click-btn {
             width: 200px;
             height: 200px;
@@ -65,65 +63,50 @@
             box-shadow: 0 0 15px rgba(0, 242, 254, 0.8);
         }
     </style>
-
-    <!-- Firebase Library CDN -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
 
     <h1>LIVE WORLD CLICK</h1>
     <div class="description">The whole world is clicking together!</div>
 
-    <!-- Bu yerda inglizcha "Connecting..." deb turadi, baza ulanganda raqamga aylanadi -->
     <div id="counter">Connecting...</div>
 
     <button class="click-btn" onclick="sendClick()">CLICK!</button>
 
-<!-- Firebase yangi kutubxonalarini ulash (Modul sifatida) -->
+    <!-- Mana shu yerda maxsus 'type="module"' bor. Bu xatoni yo'qotadi -->
     <script type="module">
-      // Firebase-ning o'zini import qilish
-      // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+      // 1. To'g'ri brauzer havolalarini import qilamiz
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyC8yPvrVav5SkiFHqWvtUb_6kJPQ26KLjc",
-  authDomain: "worldclick-aec2f.firebaseapp.com",
-  databaseURL: "https://worldclick-aec2f-default-rtdb.firebaseio.com",
-  projectId: "worldclick-aec2f",
-  storageBucket: "worldclick-aec2f.firebasestorage.app",
-  messagingSenderId: "665306339594",
-  appId: "1:665306339594:web:c52b6f21fcea6d81f682f3",
-  measurementId: "G-W9B7ERBHER"
-};
+      // 2. Sizning Firebase profilingiz sozlamalari
+      const firebaseConfig = {
+        apiKey: "AIzaSyC8yPvrVav5SKiFHqWvtUb_6kJPQ26KLjc",
+        authDomain: "worldclick-aec2f.firebaseapp.com",
+        databaseURL: "https://worldclick-aec2f-default-rtdb.firebaseio.com",
+        projectId: "worldclick-aec2f",
+        storageBucket: "worldclick-aec2f.firebasestorage.app",
+        messagingSenderId: "665306339594",
+        appId: "1:665306339594:web:c52b6f21fcea6d81f682f3",
+        measurementId: "G-W9B7ERBHER"
+      };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-      // Firebase-ni ishga tushirish
+      // 3. Firebase-ni faqat bir marta to'g'ri ishga tushiramiz
       const app = initializeApp(firebaseConfig);
       const database = getDatabase(app);
       const clicksRef = ref(database, 'total_clicks');
 
-      // Bazadan ma'lumotni jonli (live) o'qib turish
+      // 4. Jonli ma'lumot olish bo'limi
       onValue(clicksRef, (snapshot) => {
         let currentClicks = snapshot.val();
-        if (currentClicks === null) {
-            currentClicks = 0;
-        }
+        if (currentClicks === null) currentClicks = 0;
         document.getElementById('counter').innerText = Number(currentClicks).toLocaleString('en-US');
       }, (error) => {
         console.error(error);
         document.getElementById('counter').innerText = "ERROR";
       });
 
-      // Tugma bosilganda ishlaydigan funksiyani global oynaga (window) bog'laymiz
+      // 5. Tugma funksiyasini global qilish
       window.sendClick = function() {
         runTransaction(clicksRef, (currentValue) => {
             return (currentValue || 0) + 1;
