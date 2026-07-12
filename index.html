@@ -79,15 +79,28 @@
 
 <script>
   // !!! DIQQAT: Bu yerga o'zingizning Firebase sozlamalaringizni qo'yishingiz kerak (2-qadamga qarang)
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    databaseURL: "YOUR_DATABASE_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
+  // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC8yPvrVav5SkiFHqWvtUb_6kJPQ26KLjc",
+  authDomain: "worldclick-aec2f.firebaseapp.com",
+  databaseURL: "https://worldclick-aec2f-default-rtdb.firebaseio.com",
+  projectId: "worldclick-aec2f",
+  storageBucket: "worldclick-aec2f.firebasestorage.app",
+  messagingSenderId: "665306339594",
+  appId: "1:665306339594:web:c52b6f21fcea6d81f682f3",
+  measurementId: "G-W9B7ERBHER"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
   
   // Firebase-ni ishga tushirish
   firebase.initializeApp(firebaseConfig);
