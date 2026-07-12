@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live World Click</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle, #1a1a2e, #16213e);
+            color: white;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00d2fc;
+        }
+
+        .description {
+            color: #848ccf;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        /* Umumiy hisoblagich ekrani */
+        #counter {
+            font-size: 5rem;
+            font-weight: bold;
+            font-family: monospace;
+            color: #00f2fe;
+            text-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
+            margin-bottom: 30px;
+        }
+
+        /* KATTA JONLI TUGMA */
+        .click-btn {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.4);
+            transition: all 0.1s ease;
+            outline: none;
+            user-select: none;
+        }
+
+        .click-btn:active {
+            transform: scale(0.92);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.8);
+        }
+    </style>
+
+    <!-- Firebase kutubxonalarini ulash (Jonli baza uchun) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+
+    <h1>LIVE WORLD CLICK</h1>
+    <div class="description">Butun dunyo birgalikda bosmoqda!</div>
+
+    <div id="counter">Yuklanmoqda...</div>
+
+    <button class="click-btn" onclick="sendClick()">BOSING!</button>
+
+<script>
+  // !!! DIQQAT: Bu yerga o'zingizning Firebase sozlamalaringizni qo'yishingiz kerak (2-qadamga qarang)
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    databaseURL: "YOUR_DATABASE_URL",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  
+  // Firebase-ni ishga tushirish
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+  const clicksRef = database.ref('total_clicks');
+
+  // Bazadan ma'lumotni jonli (live) o'qib turish
+  clicksRef.on('value', (snapshot) => {
+    let currentClicks = snapshot.val();
+    if (currentClicks === null) {
+        currentClicks = 0;
+    }
+    document.getElementById('counter').innerText = Number(currentClicks).toLocaleString();
+  });
+
+  // Tugma bosilganda bazadagi sonni +1 ga oshirish
+  function sendClick() {
+    clicksRef.transaction((currentValue) => {
+        return (currentValue || 0) + 1;
+    });
+  }
+</script>
+
+</body>
+</html>
