@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,6 +23,7 @@
             letter-spacing: 2px;
             margin-bottom: 10px;
             text-shadow: 0 0 10px #00d2fc;
+            text-transform: uppercase;
         }
 
         .description {
@@ -31,7 +32,7 @@
             font-size: 1.1rem;
         }
 
-        /* Umumiy hisoblagich ekrani */
+        /* Global counter display */
         #counter {
             font-size: 5rem;
             font-weight: bold;
@@ -41,7 +42,7 @@
             margin-bottom: 30px;
         }
 
-        /* KATTA JONLI TUGMA */
+        /* THE BIG LIVE BUTTON */
         .click-btn {
             width: 200px;
             height: 200px;
@@ -56,6 +57,7 @@
             transition: all 0.1s ease;
             outline: none;
             user-select: none;
+            text-transform: uppercase;
         }
 
         .click-btn:active {
@@ -64,21 +66,21 @@
         }
     </style>
 
-    <!-- Firebase kutubxonalarini ulash (Jonli baza uchun) -->
+    <!-- Firebase Library CDN -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
 
     <h1>LIVE WORLD CLICK</h1>
-    <div class="description">Butun dunyo birgalikda bosmoqda!</div>
+    <div class="description">The whole world is clicking together!</div>
 
-    <div id="counter">Yuklanmoqda...</div>
+    <!-- Bu yerda inglizcha "Connecting..." deb turadi, baza ulanganda raqamga aylanadi -->
+    <div id="counter">Connecting...</div>
 
-    <button class="click-btn" onclick="sendClick()">BOSING!</button>
+    <button class="click-btn" onclick="sendClick()">CLICK!</button>
 
 <script>
-  // !!! DIQQAT: Bu yerga o'zingizning Firebase sozlamalaringizni qo'yishingiz kerak (2-qadamga qarang)
   // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
@@ -102,21 +104,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
   
-  // Firebase-ni ishga tushirish
+  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
   const clicksRef = database.ref('total_clicks');
 
-  // Bazadan ma'lumotni jonli (live) o'qib turish
+  // Realtime update logic
   clicksRef.on('value', (snapshot) => {
     let currentClicks = snapshot.val();
     if (currentClicks === null) {
         currentClicks = 0;
     }
-    document.getElementById('counter').innerText = Number(currentClicks).toLocaleString();
+    // Raqamlarni chiroyli formatda (masalan: 1,250,000) chiqaradi
+    document.getElementById('counter').innerText = Number(currentClicks).toLocaleString('en-US');
+  }, (error) => {
+    console.error("Firebase connection error: ", error);
+    document.getElementById('counter').innerText = "ERROR";
   });
 
-  // Tugma bosilganda bazadagi sonni +1 ga oshirish
+  // Click transaction
   function sendClick() {
     clicksRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
